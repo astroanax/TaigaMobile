@@ -305,9 +305,8 @@ private fun SprintItem(
             }
         }
 
-        buttonColors().let {
-            val containerColor by it.containerColor(!sprint.isClosed)
-            val contentColor by it.contentColor(!sprint.isClosed)
+        val containerColor = if (!sprint.isClosed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+            val contentColor = if (!sprint.isClosed) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
             Button(
                 onClick = { navigateToBoard(sprint) },
@@ -319,7 +318,6 @@ private fun SprintItem(
             ) {
                 Text(stringResource(R.string.taskboard))
             }
-        }
     }
 }
 

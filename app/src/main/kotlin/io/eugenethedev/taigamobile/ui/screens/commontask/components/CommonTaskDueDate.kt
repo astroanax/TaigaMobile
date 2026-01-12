@@ -16,7 +16,7 @@ import io.eugenethedev.taigamobile.domain.entities.DueDateStatus
 import io.eugenethedev.taigamobile.ui.components.pickers.DatePicker
 import io.eugenethedev.taigamobile.ui.screens.commontask.EditActions
 import io.eugenethedev.taigamobile.ui.theme.*
-import io.eugenethedev.taigamobile.ui.utils.surfaceColorAtElevation
+import io.eugenethedev.taigamobile.ui.utils.surfaceColorAtElevationCompat
 
 @Suppress("FunctionName")
 fun LazyListScope.CommonTaskDueDate(
@@ -24,8 +24,8 @@ fun LazyListScope.CommonTaskDueDate(
     editActions: EditActions
 ) {
     item {
-        val background = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-        val defaultIconBackground = MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)
+        val background = MaterialTheme.colorScheme.surfaceColorAtElevationCompat(2.dp)
+        val defaultIconBackground = MaterialTheme.colorScheme.surfaceColorAtElevationCompat(8.dp)
 
         Row(
             verticalAlignment = Alignment.CenterVertically,

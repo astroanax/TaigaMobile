@@ -27,6 +27,7 @@ import io.eugenethedev.taigamobile.ui.components.loaders.CircularLoader
 import io.eugenethedev.taigamobile.ui.theme.TaigaMobileTheme
 import io.eugenethedev.taigamobile.ui.theme.dialogTonalElevation
 import io.eugenethedev.taigamobile.ui.utils.*
+import io.eugenethedev.taigamobile.ui.utils.surfaceColorAtElevationCompat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -169,7 +170,7 @@ fun SprintScreenContent(
 
                 DropdownMenu(
                     modifier = Modifier.background(
-                        MaterialTheme.colorScheme.surfaceColorAtElevation(dialogTonalElevation)
+                        MaterialTheme.colorScheme.surfaceColorAtElevationCompat(dialogTonalElevation)
                     ),
                     expanded = isMenuExpanded,
                     onDismissRequest = { isMenuExpanded = false }

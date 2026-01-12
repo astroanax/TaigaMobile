@@ -7,18 +7,18 @@ plugins {
     kotlin("kapt")
 }
 
-val composeVersion = "1.1.1"
+val composeVersion = "1.5.3"
 
-android {
-    compileSdk = 31
-    buildToolsVersion = "30.0.3"
+    android {
+        compileSdk = 34
+        buildToolsVersion = "34.0.0"
 
-    namespace = "io.eugenethedev.taigamobile"
+        namespace = "io.eugenethedev.taigamobile"
 
-    defaultConfig {
-        applicationId = namespace!!
-        minSdk = 21
-        targetSdk = 31
+        defaultConfig {
+            applicationId = namespace!!
+            minSdk = 21
+            targetSdk = 34
         versionCode = 29
         versionName = "1.9"
         project.base.archivesName.set("TaigaMobile-$versionName")
@@ -104,9 +104,9 @@ dependencies {
 
     implementation(kotlin("reflect"))
 
-    implementation("androidx.core:core-ktx:1.7.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("com.google.android.material:material:1.6.0")
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.9.0")
 
     // ============================================================================================
     // CAREFUL WHEN UPDATING COMPOSE RELATED DEPENDENCIES - THEY CAN USE DIFFERENT COMPOSE VERSION!
@@ -115,19 +115,19 @@ dependencies {
     // Main Compose dependencies
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
-    // Material You
-    implementation("androidx.compose.material3:material3:1.0.0-alpha09")
+    // Material You (stable)
+    implementation("androidx.compose.material3:material3:1.1.0")
     implementation("androidx.compose.ui:ui-tooling:$composeVersion")
     implementation("androidx.compose.animation:animation:$composeVersion")
     // compose activity
-    implementation("androidx.activity:activity-compose:1.4.0")
+    implementation("androidx.activity:activity-compose:1.8.0")
     // view model support
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     // compose constraint layout
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     // Accompanist
-    val accompanistVersion = "0.23.1"
+    val accompanistVersion = "0.31.5-beta"
     implementation("com.google.accompanist:accompanist-pager:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-pager-indicators:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
@@ -135,10 +135,10 @@ dependencies {
     implementation("com.google.accompanist:accompanist-flowlayout:$accompanistVersion")
 
     // Coil
-    implementation("io.coil-kt:coil-compose:1.3.2")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Navigation Component (with Compose)
-    implementation("androidx.navigation:navigation-compose:2.5.0-rc01")
+    implementation("androidx.navigation:navigation-compose:2.7.0")
 
     // Paging (with Compose)
     implementation("androidx.paging:paging-compose:1.0.0-alpha14")
@@ -150,7 +150,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
 
     // Moshi
-    val moshiVersion = "1.13.0"
+    val moshiVersion = "1.15.0"
     implementation("com.squareup.moshi:moshi:$moshiVersion")
     kapt("com.squareup.moshi:moshi-kotlin-codegen:$moshiVersion")
 
@@ -165,7 +165,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:$okHttpVersion")
 
     // Dagger 2
-    val daggerVersion = "2.42"
+    val daggerVersion = "2.47"
     implementation("com.google.dagger:dagger-android:$daggerVersion")
     kapt("com.google.dagger:dagger-android-processor:$daggerVersion")
     kapt("com.google.dagger:dagger-compiler:$daggerVersion")
@@ -210,16 +210,29 @@ fun DependencyHandler.allTestsImplementation(dependencyNotation: Any) {
     androidTestImplementation(dependencyNotation)
 }
 
-tasks.register<Exec>("launchTestInstance") {
-    commandLine("../taiga-test-instance/launch-taiga.sh")
-}
+// Test instance tasks: run only when explicitly requested via env var LAUNCH_TEST_INSTANCE=true
+val launchTestInstanceEnabled = System.getenv("LAUNCH_TEST_INSTANCE") == "true"
 
-tasks.register<Exec>("stopTestInstance") {
-    commandLine("../taiga-test-instance/stop-taiga.sh")
-}
+if (launchTestInstanceEnabled) {
+    tasks.register<Exec>("launchTestInstance") {
+        commandLine("../taiga-test-instance/launch-taiga.sh")
+    }
 
-tasks.withType<Test> {
-    dependsOn("launchTestInstance")
-    finalizedBy("stopTestInstance")
+    tasks.register<Exec>("stopTestInstance") {
+        commandLine("../taiga-test-instance/stop-taiga.sh")
+    }
+
+    tasks.withType<Test> {
+        dependsOn("launchTestInstance")
+        finalizedBy("stopTestInstance")
+    }
+} else {
+    // No-op placeholders so referencing the tasks doesn't fail if scripts expect them
+    tasks.register("launchTestInstance") {
+        doLast { println("Skipping launchTestInstance (LAUNCH_TEST_INSTANCE != true)") }
+    }
+    tasks.register("stopTestInstance") {
+        doLast { println("Skipping stopTestInstance (LAUNCH_TEST_INSTANCE != true)") }
+    }
 }
 
